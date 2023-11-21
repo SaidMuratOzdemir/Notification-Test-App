@@ -6,7 +6,11 @@ plugins {
 
 android {
     namespace 'com.saidmuratozdemir.notificationtestapp'
-    compileSdk 34 // TODO: hata alınırsa 34 e çekilecek
+    compileSdk 34
+
+    buildFeatures {
+        viewBinding true
+    }
 
     defaultConfig {
         applicationId "com.saidmuratozdemir.notificationtestapp"

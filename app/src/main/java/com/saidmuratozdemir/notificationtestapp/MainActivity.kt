@@ -1,125 +1,150 @@
 package com.saidmuratozdemir.notificationtestapp
 
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.app.NotificationManager
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.Task
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.messaging.FirebaseMessaging
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.saidmuratozdemir.notificationtestapp.databinding.ActivityMainBinding
+import com.saidmuratozdemir.notificationtestapp.listeners.ItemClickListener
+import com.saidmuratozdemir.notificationtestapp.model.CardModel
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class MainActivity : AppCompatActivity() {
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-    private val notificationManager: NotificationManager by lazy {
-        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    }
+
+    private lateinit var binding: ActivityMainBinding
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // android library module nasıl yapılıyor?
+        val homeCardList = listOf(
+            CardModel(
+                "firebase_config",
+                "Enter Firebase Configurations",
+                "Enter Firebase configurations or import google-services.json file",
+                R.drawable.settings
+            ),
+            CardModel(
+                "notification_permission",
+                "Check Notification Permission",
+                "Check if notification permission is granted",
+                R.drawable.check
+            ),
+            CardModel(
+                "see_token",
+                "See Device Token",
+                "See Firebase token that is generated for your device",
+                R.drawable.phone
+            ),
+            CardModel(
+                "notification_history",
+                "See Notification History",
+                "See notifications that has been sent to your device",
+                R.drawable.history
+            ),
+            CardModel("language", "Language", "Select language", R.drawable.language),
+            CardModel("about_us", "About Us", "See information about us", R.drawable.info)
 
-        checkPermissionButton()
+        )
 
-        copyButton()
-
-        shareButton()
+        val cardAdapter = CardAdapter(itemClickListener)
+        cardAdapter.setList(homeCardList)
+        binding.recyclerView.adapter = cardAdapter
 
     }
 
-    private fun copyButton() {
-        findViewById<Button>(R.id.copy_button).setOnClickListener {
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setPrimaryClip(
-                android.content.ClipData.newPlainText(
-                    "token",
-                    "copyString"
-                )
-            )
-            Snackbar.make(
-                findViewById<View>(android.R.id.content).rootView,
-                "Token copied to clipboard",
-                Snackbar.LENGTH_LONG
-            ).show()
-        }
+    private val itemClickListener = object : ItemClickListener {
+        override fun onClick(objects: Any?) {
+            val cardModel = objects as CardModel
 
-    }
+            when (cardModel.id) {
+                "firebase_config" -> {
+                    val intent = Intent(this@MainActivity, FirebaseConfigActivity::class.java)
+                    startActivity(intent)
 
-    private fun shareButton() {
-        findViewById<Button>(R.id.share_button).setOnClickListener {
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, "tokenString")
-                type = "text/plain"
-            }
+                }
 
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-        }
-    }
+                "notification_permission" -> {
+                    // TODO: write
+                }
 
-    private fun checkPermissionButton() {
+                "see_token" -> {
+                    val intent = Intent(this@MainActivity, TokenActivity::class.java)
+                    intent.putExtra("token", "tokenString")
+                    startActivity(intent)
+                }
 
+                "notification_history" -> {
+                    val intent = Intent(this@MainActivity, HistoryActivity::class.java)
+                    startActivity(intent)
+                }
+                "language" -> {
 
-//        // Sets up notification channel.
-//        createNotificationChannel()
+                    val checkedItem = intArrayOf(0)
+                    // show language dialog with 3 options
+                    val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
 
-        // Sets up button.
-        findViewById<Button>(R.id.button_check_notification_permission).setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    POST_NOTIFICATIONS,
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                Snackbar.make(
-                    findViewById<View>(android.R.id.content).rootView,
-                    "Permission already granted",
-                    Snackbar.LENGTH_LONG
-                ).show()
-            } else {
-                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
-            }
-        }
+                    // set the custom icon to the alert dialog
 
-        requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                Snackbar.make(
-                    findViewById<View>(android.R.id.content).rootView,
-                    "Permission granted",
-                    Snackbar.LENGTH_LONG
-                ).show()
-            } else {
-                Snackbar.make(
-                    findViewById<View>(android.R.id.content).rootView,
-                    "Swiped away or denied permission. You can grant it from settings.",
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-        }
-    }
+                    // set the custom icon to the alert dialog. use deprecated method setIcon() to set icon
+                    alertDialog.setIcon(R.drawable.language)
 
-    private fun subscribeToTopic() {
-        FirebaseMessaging.getInstance().subscribeToTopic("youtube-yeni-video")
-            .addOnCompleteListener { task: Task<Void> ->
-                if (task.isSuccessful) {
-                    println("Successfully subscribed to topic")
-                } else {
-                    println("Failed to subscribe to topic")
+                    // title of the alert dialog
+
+                    // title of the alert dialog
+                    alertDialog.setTitle("Choose a Language")
+
+                    // list of the items to be displayed to the user in the
+                    // form of list so that user can select the item from
+
+                    // list of the items to be displayed to the user in the
+                    // form of list so that user can select the item from
+                    val listItems = arrayOf("English", "Turkish", "Spanish")
+
+                    // the function setSingleChoiceItems is the function which
+                    // builds the alert dialog with the single item selection
+
+                    // the function setSingleChoiceItems is the function which
+                    // builds the alert dialog with the single item selection
+                    alertDialog.setSingleChoiceItems(listItems, checkedItem[0]) { dialog, which ->
+                        // update the selected item which is selected by the user so that it should be selected
+                        // when user opens the dialog next time and pass the instance to setSingleChoiceItems method
+                        checkedItem[0] = which
+
+                        // when selected an item the dialog should be closed with the dismiss method
+                        dialog.dismiss()
+                    }
+
+                    // set the negative button if the user is not interested to select or change already selected item
+
+                    // set the negative button if the user is not interested to select or change already selected item
+                    alertDialog.setNegativeButton("Cancel") { _, _ -> }
+
+                    // create and build the AlertDialog instance with the AlertDialog builder instance
+
+                    // create and build the AlertDialog instance with the AlertDialog builder instance
+                    val customAlertDialog: AlertDialog = alertDialog.create()
+
+                    // show the alert dialog when the button is clicked
+
+                    // show the alert dialog when the button is clicked
+                    customAlertDialog.show()
+                }
+                "about_us" -> {
+                    val intent = Intent(this@MainActivity, AboutUsActivity::class.java)
+                    startActivity(intent)
                 }
             }
+        }
+
+        override fun onLongClick(view: View, objects: Any?) {
+
+        }
     }
 }
