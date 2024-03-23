@@ -75,6 +75,12 @@
                         tools:ignore="SmallSp"/>
             </LinearLayout>
 
+            <Switch
+                android:id="@+id/itemSwitch"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
+
 
         </LinearLayout>
 

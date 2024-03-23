@@ -36,6 +36,11 @@ class CardAdapter(var itemClickListener: ItemClickListener) :
             itemTitle.text = item.title
             itemDescription.text = item.description
             iteImageView.setImageResource(item.imageRes)
+            if (item.shouldShowSwitch) {
+                itemSwitch.visibility = ViewGroup.VISIBLE
+            } else {
+                itemSwitch.visibility = ViewGroup.GONE
+            }
         }
 
         holder.itemView.setOnClickListener {

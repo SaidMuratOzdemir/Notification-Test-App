@@ -28,29 +28,51 @@ class MainActivity : AppCompatActivity() {
                 "firebase_config",
                 "Enter Firebase Configurations",
                 "Enter Firebase configurations or import google-services.json file",
-                R.drawable.settings
+                R.drawable.settings,
+                false
             ),
             CardModel(
                 "notification_permission",
                 "Check Notification Permission",
                 "Check if notification permission is granted",
-                R.drawable.check
+                R.drawable.check,
+                false
             ),
             CardModel(
                 "see_token",
                 "See Device Token",
                 "See Firebase token that is generated for your device",
-                R.drawable.phone
+                R.drawable.phone,
+                false
             ),
             CardModel(
                 "notification_history",
                 "See Notification History",
                 "See notifications that has been sent to your device",
-                R.drawable.history
+                R.drawable.history,
+                false
             ),
-            CardModel("language", "Language", "Select language", R.drawable.language),
-            CardModel("about_us", "About Us", "See information about us", R.drawable.info)
-
+            CardModel(
+                "language",
+                "Language",
+                "Select language",
+                R.drawable.language,
+                false
+            ),
+            CardModel(
+                "change_theme",
+                "Change Theme",
+                "Switch between light and dark theme",
+                R.drawable.darkmode,
+                true
+            ),
+            CardModel(
+                "about_us",
+                "About Us",
+                "See information about us",
+                R.drawable.info,
+                false
+            )
         )
 
         val cardAdapter = CardAdapter(itemClickListener)
@@ -76,7 +98,10 @@ class MainActivity : AppCompatActivity() {
 
                 "see_token" -> {
                     val intent = Intent(this@MainActivity, TokenActivity::class.java)
-                    intent.putExtra("token", "tokenString")
+                    intent.putExtra(
+                        "token",
+                        "d2nZK1JLTsuijPN__h9IwS:APA91bGTJFrjYViIIWkUvEoKcoT4XZavxXS3YObcjKghiP8olWHaNJnwJBzrYwrSmKx1tEYPOmkGr6ytBkTA3bcf6nbIaNx21dvnQ4GM2_XxFEK297Ze_xzRJJRn0Bh-12cK8YxyaHqK"
+                    )
                     startActivity(intent)
                 }
 
@@ -87,55 +112,27 @@ class MainActivity : AppCompatActivity() {
                 "language" -> {
 
                     val checkedItem = intArrayOf(0)
-                    // show language dialog with 3 options
+
                     val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
 
-                    // set the custom icon to the alert dialog
-
-                    // set the custom icon to the alert dialog. use deprecated method setIcon() to set icon
                     alertDialog.setIcon(R.drawable.language)
 
-                    // title of the alert dialog
-
-                    // title of the alert dialog
                     alertDialog.setTitle("Choose a Language")
 
-                    // list of the items to be displayed to the user in the
-                    // form of list so that user can select the item from
-
-                    // list of the items to be displayed to the user in the
-                    // form of list so that user can select the item from
                     val listItems = arrayOf("English", "Turkish", "Spanish")
 
-                    // the function setSingleChoiceItems is the function which
-                    // builds the alert dialog with the single item selection
-
-                    // the function setSingleChoiceItems is the function which
-                    // builds the alert dialog with the single item selection
                     alertDialog.setSingleChoiceItems(listItems, checkedItem[0]) { dialog, which ->
-                        // update the selected item which is selected by the user so that it should be selected
-                        // when user opens the dialog next time and pass the instance to setSingleChoiceItems method
                         checkedItem[0] = which
-
-                        // when selected an item the dialog should be closed with the dismiss method
                         dialog.dismiss()
                     }
 
-                    // set the negative button if the user is not interested to select or change already selected item
-
-                    // set the negative button if the user is not interested to select or change already selected item
                     alertDialog.setNegativeButton("Cancel") { _, _ -> }
 
-                    // create and build the AlertDialog instance with the AlertDialog builder instance
-
-                    // create and build the AlertDialog instance with the AlertDialog builder instance
                     val customAlertDialog: AlertDialog = alertDialog.create()
 
-                    // show the alert dialog when the button is clicked
-
-                    // show the alert dialog when the button is clicked
                     customAlertDialog.show()
                 }
+
                 "about_us" -> {
                     val intent = Intent(this@MainActivity, AboutUsActivity::class.java)
                     startActivity(intent)

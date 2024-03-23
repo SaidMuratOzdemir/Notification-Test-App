@@ -1,5 +1,9 @@
 package com.saidmuratozdemir.notificationtestapp.model
 
+import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+
 data class FirebaseConfig(
     val url: String,
     val projectId: String,
@@ -7,9 +11,14 @@ data class FirebaseConfig(
     val apiKey: String
 ) {
     companion object {
-        fun fromString(string: String): FirebaseConfig {
-            val split = string.split(" ")
-            return FirebaseConfig(split[0], split[1], split[2], split[3])
+        fun fromString(jsonString: String): FirebaseConfig? {
+            return try {
+                Gson().fromJson(jsonString, FirebaseConfig::class.java)
+            } catch (e: JsonSyntaxException) {
+                // Handle JSON parsing errors gracefully
+                Log.e("FirebaseConfig", "Error parsing JSON: $e")
+                null
+            }
         }
     }
 }
